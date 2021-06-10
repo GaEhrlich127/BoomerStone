@@ -1,7 +1,7 @@
-import NotFound from '../../components/NotFound';
+import FullPageSearch from '../../components/FullPageSearch';
 
-const placeholder = () => (
-  <NotFound />
+const SearchLandingPage = () => (
+  <FullPageSearch />
 );
 
-export default placeholder;
+export default SearchLandingPage;
