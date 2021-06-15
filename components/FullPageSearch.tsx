@@ -3,11 +3,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import Button from './Button';
 import { useRouter } from 'next/router';
+import classNames from 'classnames';
 
 const FullPageSearch = () => {
 
   const [query, setQuery] = useState(null);
   const router = useRouter();
+
+  const count = (str:String, char:String) => {
+    char=char.slice(0,1);
+    let counter=0;
+    for(let i in str){
+      if(str[i]===char)
+        counter++;
+    }
+    return counter;
+  }
+
+  const searchIsValid = () => {
+    if(query===null || typeof query==='undefined') { return true; }
+    if(query.includes('(')||query.includes(')')){
+      if(count(query, '(') !== count(query, ')'))
+        return false;
+    }
+    return (query.replaceAll('(','').replaceAll(')','').match(/^(\ *([cekrst]:\ *([^%/\\\?():<>="\ ]+|"[^%/\\\?():<>="]+")|[mah][:<>=]\ *\d+|[^%/\\\?():<>="\ ]+|OR|u:\ *(t(rue)?|f(alse)?))\ *)+$/gm));
+  }
+
+  const safeIncludes = (str:String, term) => {
+    if(str===null || typeof str==='undefined') return false;
+    return str.includes(term);
+  }
 
   return (
     <div className='bg-blue-400 w-screen h-screen space-y-4'>
@@ -26,6 +51,16 @@ const FullPageSearch = () => {
             />
           </div>
         </div>
+      </div>
+      <div>
+        {(!searchIsValid() || safeIncludes(query, '(' ) ) && (
+          <div className={classNames({'flex justify-center text-white':true, 'bg-red-500':!searchIsValid(), 'bg-yellow-400':searchIsValid()&&query.includes('(')})}>
+            {!searchIsValid() ?
+              "ERROR: Your search has a problem in its formatting." : 
+              "WARNING: Validation with Parentheses is still being worked on. Your query will probably work, but we cannot check at this moment."
+            }
+          </div>
+        )}
       </div>
       <div className='flex justify-center'>
         <div className='flex justify-around w-screen md:w-3/6'>
