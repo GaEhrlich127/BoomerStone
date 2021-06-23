@@ -21,7 +21,7 @@ const FullPageSearch = () => {
   }
 
   const searchIsValid = () => {
-    if(query===null || typeof query==='undefined') { return true; }
+    if(query===null || typeof query==='undefined' || query==='') { return true; }
     if(query.includes('(')||query.includes(')')){
       if(count(query, '(') !== count(query, ')'))
         return false;
@@ -52,9 +52,20 @@ const FullPageSearch = () => {
           </div>
         </div>
       </div>
-      <div>
+      <div className={
+        classNames({
+          'flex justify-center':true,
+          'h-14': searchIsValid() && !query.includes('(')
+        })
+      }>
         {(!searchIsValid() || safeIncludes(query, '(' ) ) && (
-          <div className={classNames({'flex justify-center text-white':true, 'bg-red-500':!searchIsValid(), 'bg-yellow-400':searchIsValid()&&query.includes('(')})}>
+          <div className={
+            classNames({
+              'flex justify-around text-white w-screen rounded-md px-2 py-1 md:w-3/6':true,
+              'bg-red-500 mb-6':!searchIsValid(),
+              'bg-yellow-400': searchIsValid() && query.includes('(')
+            })
+          }>
             {!searchIsValid() ?
               "ERROR: Your search has a problem in its formatting." : 
               "WARNING: Validation with Parentheses is still being worked on. Your query will probably work, but we cannot check at this moment."
