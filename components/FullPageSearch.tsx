@@ -55,7 +55,7 @@ const FullPageSearch = () => {
       <div className={
         classNames({
           'flex justify-center':true,
-          'h-14': searchIsValid() && !query.includes('(')
+          'h-14': searchIsValid() && !safeIncludes(query,'(')
         })
       }>
         {(!searchIsValid() || safeIncludes(query, '(' ) ) && (
@@ -63,7 +63,7 @@ const FullPageSearch = () => {
             classNames({
               'flex justify-around text-white w-screen rounded-md px-2 py-1 md:w-3/6':true,
               'bg-red-500 mb-6':!searchIsValid(),
-              'bg-yellow-400': searchIsValid() && query.includes('(')
+              'bg-yellow-400': searchIsValid() && safeIncludes(query,'(')
             })
           }>
             {!searchIsValid() ?
