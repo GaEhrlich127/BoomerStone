@@ -106,24 +106,40 @@ const CardLayout = () => {
     )
   else
     return(
-      <div className='bg-blue-400 w-screen h-screen flex justify-center'>
-        <div className="mt-16 p-4 rounded-lg h-auto bg-white shadow-md flex ">
+      <div className='bg-blue-400 min-w-screen min-h-screen flex justify-center'>
+        <div className="my-8 p-4 rounded-lg h-full bg-white shadow-md flex flex-col sm:flex-row">
           <div className='pr-2'>
             <Image src={buildImagePath()} width={.8*375} height={.8*518} alt={cardInfo?.Name ?? 'Loading'}/>
           </div>
           
           <div className='mt-6 flex-col space-y-2'>
-            {/* Card Information */}
+            
+            {/* Attributes */}
             {/* Name */}
+            {/* Cost */}
+            {/* Attack IF PRESENT */}
+            {/* Health || Weapon -> Durability */}
+            <div className='flex-col'>
+              <div>
+                <p>Name: {cardInfo?.Name}</p>
+              </div>
+              <div>
+                <p>Cost: {cardInfo?.Cost}</p>
+              </div>
+              {typeof cardInfo?.Attack!=='undefined' && (
+                <div>
+                  <p>{cardInfo?.Attack}/{cardInfo?.Health}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Card Information */}
             {/* Class */}
             {/* CardSet || Uncollectible -> Token Type */}
             {/* Rarity */}
             {/* Type */}
             {/* Tribe IF PRESENT */}
             <div className='flex-col'>
-              <div>
-                <p>Name: {cardInfo?.Name}</p>
-              </div>
               <div>
                 <p>Class: {cardInfo?.Class}</p>
               </div>
@@ -161,27 +177,6 @@ const CardLayout = () => {
               )}
             </div>
 
-            
-            {/* Attributes */}
-            {/* Cost */}
-            {/* Attack IF PRESENT */}
-            {/* Health || Weapon -> Durability */}
-            <div className='flex-col'>
-              <div>
-                <p>Cost: {cardInfo?.Cost}</p>
-              </div>
-              {typeof cardInfo?.Attack!=='undefined' && (
-                <div>
-                  <p>Attack: {cardInfo?.Attack}</p>
-                </div>
-              )}
-              {typeof cardInfo?.Health!=='undefined' && (
-                <div>
-                  <p>{cardInfo?.Type==='Weapon' ? 'Durability' : 'Health'}: {cardInfo?.Health}</p>
-                </div>
-              )}  
-            </div>
-
             {/* Keywords */}
             {/* Textbox */}
             <div className='flex-col'>
@@ -192,12 +187,10 @@ const CardLayout = () => {
               )}
               {typeof cardInfo?.Textbox!=='undefined' && (
                 <div>
-                  <p>
-                    Textbox: <br/>
-                    <div className='ml-2 w-52 bg-blue-200 p-1 rounded-md shadow-sm'>
-                      {cardInfo?.Textbox}
-                    </div>
-                  </p>
+                  Textbox: <br/>
+                  <div className='ml-2 w-52 bg-blue-200 p-1 rounded-md shadow-sm'>
+                    {cardInfo?.Textbox}
+                  </div>
                 </div>
               )}
             </div>
