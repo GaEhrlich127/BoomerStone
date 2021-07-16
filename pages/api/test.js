@@ -5,9 +5,8 @@ export default async (req, res) => {
 
     const cards = await db
         .collection("Year 1 & 2")
-        .find({ Keywords : "Taunt" })
+        .find({ Keywords : "Taunt" , _id:require('mongodb').ObjectID("60ce2211bbc32b1d34fb8d6e")})
         .sort({})
-        .limit(10)
         .toArray();
 
     res.json(cards);
