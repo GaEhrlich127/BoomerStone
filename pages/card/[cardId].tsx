@@ -3,100 +3,33 @@ import Image from 'next/image';
 import { useEffect, useState } from "react";
 import ReactLoading from 'react-loading';
 import classNames from 'classnames';
+import { buildImagePath } from '../../util/buildImagePath';
+import { connectToDatabase } from "../../util/mongodb";
 
-const CardLayout = () => {
+
+const CardLayout = ({cards}) => {
   const [cardInfo, setCardInfo] = useState(null);
+  const [filePath, setFilePath] = useState(null);
+  const [pathUpdated, setPathUpdated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const {cardId} = useRouter().query;
 
   useEffect(()=>{
-    //Do some voodoo with actually querying MongoDB here
-    if(cardId==='0')
-      setCardInfo({
-        Name: "Druid of the Claw",
-        Rarity: "Common",
-        Type: "Minion",
-        Class: "Druid",
-        Cost: 5,
-        Attack: 4,
-        Health: 4,
-        CardSet: "Classic",
-        Keywords: "Choose One",
-        Textbox: "Choose One - Transform into a 4/4 with Charge; or a 4/6 with Taunt."
-      })
-    else if (cardId==='1')
-      setCardInfo({
-        Name: "Snake Trap",
-        Rarity: "Epic",
-        Type: "Spell",
-        Class: "Hunter",
-        Cost: 2,
-        CardSet: "Classic",
-        Keywords: "Secret",
-        Textbox:"Secret: When one of your minions is attacked, summon three 1/1 Snakes."
-      })
-    else if (cardId==='2')
-      setCardInfo({
-        Name: "Gorehowl",
-        Rarity: "Epic",
-        Type: "Weapon",
-        Class: "Warrior",
-        Cost: 7,
-        Attack: 7,
-        Health: 1,
-        CardSet: "Classic",
-        Textbox: "Attacking a minion costs 1 Attack instead of 1 Durability."
-      })
-    else if (cardId==='3')
-      setCardInfo({
-        Name: "Rogues Do It...",
-        Rarity: "Token",
-        Type: "Spell",
-        Class: "Neutral",
-        Cost: 4,
-        Textbox: "Deal 4 damage. Draw a card.",
-        TokenType: "Power Chord"
-      })
-    else if (cardId==='4')
-      setCardInfo({
-        Name:"Emerald Drake",
-        Rarity:"Token",
-        Type:"Minion",
-        Subtype:"Dragon",
-        Class:"Neutral",
-        Cost:4,
-        Attack:7,
-        Health:6,
-        TokenType:"Dream"
-      })
-  }, [cardId])
-
-  useEffect(()=>{
-    console.log(cardInfo)
-    if(cardInfo===null || typeof cardInfo==='undefined' || cardInfo==={}){
-      setLoading(false);
-      console.log('Loading Complete!')
+    if(Array.isArray(cards)){
+      setCardInfo(cards[0])
     }
+  }, [cards])
+
+  useEffect(()=>{
+    buildImagePath(cardInfo).then((path)=>{
+      setFilePath(path);
+      setPathUpdated(true);
+    })
   }, [cardInfo])
 
-  const setConverter = {
-    "Classic":"Classic",
-    "Basic":"Basic",
-    "Curse of Naxxramas":"Naxx",
-    "Goblins vs Gnomes":"GVG",
-    "Blackrock Mountain":"BRM",
-    "The Grand Tournament":"TGT",
-    "League of Explorers":"LOE",
-  }
-
-  const buildImagePath = () => {
-    if (typeof cardInfo === 'undefined' || cardInfo === null)
-      return `/images/cards/404.png`;
-    else if (typeof cardInfo.TokenType === 'undefined')
-      return `/images/cards/${cardInfo.Class}/${setConverter[cardInfo.CardSet]}/${cardInfo.Name}.png`;
-    else
-      return `/images/cards/${cardInfo.TokenType}/${cardInfo.Name}.png`;
-  }
+  useEffect(()=>{
+    if(pathUpdated)
+      setLoading(false);
+  },[filePath])
 
   if(loading)
     return(
@@ -109,7 +42,7 @@ const CardLayout = () => {
       <div className='bg-blue-400 min-w-screen min-h-screen flex justify-center'>
         <div className="my-8 p-4 rounded-lg h-full bg-white shadow-md flex flex-col sm:flex-row">
           <div className='pr-2'>
-            <Image src={buildImagePath()} width={.8*375} height={.8*518} alt={cardInfo?.Name ?? 'Loading'}/>
+            {filePath && (<Image src={filePath} width={.8*375} height={.8*518} alt={cardInfo?.Name ?? 'Loading'}/>)}
           </div>
           
           <div className='mt-6 flex-col space-y-2'>
@@ -199,5 +132,30 @@ const CardLayout = () => {
       </div>
     )
 };
+
+export async function getStaticPaths() {
+  return {
+    paths: [
+      { params: { cardId:'0' } } // See the "paths" section below
+    ],
+    fallback: true // See the "fallback" section below
+  };
+}
+
+export async function getStaticProps(context) {
+  const { db } = await connectToDatabase();
+
+  const cards = await db
+      .collection("Year 1 & 2")
+      .find({ _id:require('mongodb').ObjectID(context.params.cardId)} )
+      .sort({})
+      .toArray();
+
+  return {
+    props: {
+      cards: JSON.parse(JSON.stringify(cards)),
+    },
+  };
+}
 
 export default CardLayout;
