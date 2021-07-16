@@ -136,13 +136,16 @@ const CardLayout = ({cards}) => {
 export async function getStaticPaths() {
   return {
     paths: [
-      { params: { cardId:'0' } } // See the "paths" section below
+      { params: { cardId:'null' } } // See the "paths" section below
     ],
     fallback: true // See the "fallback" section below
   };
 }
 
 export async function getStaticProps(context) {
+  if(context.params.cardId==='null')
+    return {props:{cards:null}};
+
   const { db } = await connectToDatabase();
 
   const cards = await db
