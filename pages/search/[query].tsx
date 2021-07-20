@@ -4,15 +4,10 @@ import { useEffect, useState } from "react";
 import ReactLoading from 'react-loading';
 import { buildImagePath } from '../../util/buildImagePath';
 import { connectToDatabase } from "../../util/mongodb";
+import { cardInformation } from "../../util/interfaces";
 
 // currentPage:int default 1
 // loop i=currentPage-1 -> currentPage*pageSize
-
-interface cardInformation{
-  filePath: string;
-  name: string;
-  id: string;
-}
 
 const SearchLayout = ({cards}) => {
   const [cardInfo, setCardInfo] = useState<Array<cardInformation>>(null);
@@ -27,8 +22,7 @@ const SearchLayout = ({cards}) => {
         buildImagePath(entry).then((result)=>{
           buildingArray.push({
             filePath: result,
-            name: entry.Name,
-            id: entry._id
+            ...entry
           })
           if(buildingArray.length===cards?.length){
             console.log('updating state')
@@ -65,9 +59,9 @@ const SearchLayout = ({cards}) => {
                   src={card.filePath}
                   width={.8*375}
                   height={.8*518}
-                  alt={card.name ?? 'Loading'}
-                  key={card.name}
-                  onClick={()=>{router.push(`/card/${card.id}`)}}
+                  alt={card.Name ?? 'Loading'}
+                  key={card.Name}
+                  onClick={()=>{router.push(`/card/${card._id}`)}}
                 />
               )
             })}
