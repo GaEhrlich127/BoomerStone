@@ -49,7 +49,7 @@ const SearchLayout = ({cards}) => {
                 //If the card has been weighted
                 if(buildingArray[rand].Class!=='Neutral'){
                   //Check a few slots to the left and right
-                  for(let j=rand32;j<=rand+3;j++){
+                  for(let j=rand-3;j<=rand+3;j++){
                     //If it's a legal array slot
                     if(j>=0 && j<buildingArray.length){
                       //and we have a match
