@@ -13,9 +13,9 @@ const buildImagePath = (cardInfo) => {
     if (typeof cardInfo === 'undefined' || cardInfo === null)
       resolve(`/images/cards/404.png`);
     else if (typeof cardInfo["Token Type"] === 'undefined')
-      resolve(`/images/cards/${cardInfo.Class}/${setConverter[cardInfo["Card Set"]]}/${cardInfo.Name}.png`);
+      resolve(`/images/cards/${cardInfo.Class}/${setConverter[cardInfo["Card Set"]]}/${cardInfo.Name.replaceAll(':','')}.png`);
     else
-      resolve(`/images/cards/${cardInfo["Token Type"]}/${cardInfo.Name}.png`);
+      resolve(`/images/cards/${cardInfo["Token Type"]}/${cardInfo.Name.replaceAll(':','')}.png`);
   })
 }
 
