@@ -25,16 +25,14 @@ const SearchLayout = ({cards}) => {
             filePath: result,
             ...entry
           })
-          //Adds the 3x weight on class cards
+          //Adds the 4x weight on class cards
           if(entry.Class!=='Neutral' && cards.length>3){
-            buildingArray.push({
-              filePath: result,
-              ...entry
-            })
-            buildingArray.push({
-              filePath: result,
-              ...entry
-            })
+            for(let i=0;i<3;i++){
+              buildingArray.push({
+                filePath: result,
+                ...entry
+              })
+            }
           }
           cardsAdded++;
           if(cardsAdded===cards?.length){
@@ -51,7 +49,7 @@ const SearchLayout = ({cards}) => {
                 //If the card has been weighted
                 if(buildingArray[rand].Class!=='Neutral'){
                   //Check a few slots to the left and right
-                  for(let j=rand-2;j<=rand+2;j++){
+                  for(let j=rand32;j<=rand+3;j++){
                     //If it's a legal array slot
                     if(j>=0 && j<buildingArray.length){
                       //and we have a match
