@@ -88,7 +88,7 @@ export async function getStaticProps(context) {
 
   const cards = await db
       .collection("Year 1 & 2")
-      .find({ Class:"Neutral" } )
+      .find({ Name:/Mark/ } )
       .sort({})
       .toArray();
 

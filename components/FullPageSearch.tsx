@@ -1,14 +1,23 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from './Button';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
+import { splitTerms } from '../util/MongoDBBuilders';
 
 const FullPageSearch = () => {
 
   const [query, setQuery] = useState(null);
   const router = useRouter();
+
+
+  useEffect(()=>{
+    if(!(query===null || typeof query==='undefined')){
+      console.log(splitTerms(query.replaceAll('  ',' ')));
+
+    }
+  }, [query])
 
   const count = (str:String, char:String) => {
     char=char.slice(0,1);
@@ -26,7 +35,7 @@ const FullPageSearch = () => {
       if(count(query, '(') !== count(query, ')'))
         return false;
     }
-    return (query.replaceAll('(','').replaceAll(')','').match(/^(\ *([cekrst]:\ *([^%/\\\?():<>="\ ]+|"[^%/\\\?():<>="]+")|[mah][:<>=]\ *\d+|[^%/\\\?():<>="\ ]+|OR|u:\ *(t(rue)?|f(alse)?))\ *)+$/gm));
+    return (query.replaceAll('(','').replaceAll(')','').match(/^(\ *([cekrst]:\ *([^%/\\\?():<>="\ ]+|"[^%/\\\?():<>="]+")|[mah][:<>=]\={0,1}\ *\d+|[^%/\\\?():<>="\ ]+|OR|u:\ *(t(rue)?|f(alse)?))\ *)+$/gm));
   }
 
   const safeIncludes = (str:String, term) => {
