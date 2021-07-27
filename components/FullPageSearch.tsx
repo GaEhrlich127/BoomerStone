@@ -53,7 +53,7 @@ const FullPageSearch = () => {
           />
           <div
             className='w-4 flex items-center cursor-pointer md:pl-2 lg:pl-4'
-            onClick={ ()=>{router.push(`search/${query}`)} }
+            onClick={ ()=>{router.push(`/search/${query}`)} }
           >
             <FontAwesomeIcon 
               icon={faSearch}
@@ -84,9 +84,9 @@ const FullPageSearch = () => {
       </div>
       <div className='flex justify-center'>
         <div className='flex justify-around w-screen md:w-3/6'>
-            <Button text='Random Card' onClick={ ()=>{router.push(`random/${query}`)} }/>
-            <Button text='Discover' onClick={ ()=>{router.push(`discover/${query}`)} }/>
-            <Button text='Search' onClick={ ()=>{router.push(`search/${query}`)} }/>
+            <Button text='Random Card' onClick={ ()=>{router.push(`/random/${query}`)} }/>
+            <Button text='Discover' onClick={ ()=>{router.push(`/discover/${query}`)} }/>
+            <Button text='Search' onClick={ ()=>{router.push(`/search/${query}`)} }/>
         </div>
       </div>
     </div>
