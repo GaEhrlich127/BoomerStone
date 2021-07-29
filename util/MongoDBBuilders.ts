@@ -8,7 +8,7 @@ interface MongoDBTerm{
 }
 export const splitTerms = (str) => {
   if(typeof str!=='undefined')
-    str=str.replaceAll('  ',' ');
+    str=str.replace(/  /g,' ');
   
   let terms=[];
   let buildingObject:MongoDBTerm={
