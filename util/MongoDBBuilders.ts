@@ -232,7 +232,9 @@ export const joinTerms = async(terms) => {
   })
 }
 
-//TODO: Search SmallSearch not redirecting properly
-//TODO: 0 results staying loading forever.
-//TODO: Random pages
+//TODO: fix context.params.query.replaceAll crash on prod
 //TODO: Hook discover/query into database
+//TODO: Random pages
+//TODO: 0 results staying loading forever.
+//TODO: Syntax Guide page
+//TODO: Search SmallSearch not redirecting properly

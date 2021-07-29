@@ -11,7 +11,7 @@ import { splitTerms, joinTerms } from '../../util/MongoDBBuilders';
 // currentPage:int default 1
 // loop i=currentPage-1 -> currentPage*pageSize
 
-const SearchLayout = ({cards, initialQuery}) => {
+const SearchLayout = ({cards, initialized=false}) => {
   const [cardInfo, setCardInfo] = useState<Array<cardInformation>>(null);
   const [pathUpdated, setPathUpdated] = useState<Boolean>(false);
   const [loading, setLoading] = useState<Boolean>(true);
@@ -19,8 +19,7 @@ const SearchLayout = ({cards, initialQuery}) => {
   const router=useRouter();
 
   useEffect(()=>{
-    if(Array.isArray(cards)){
-      setQuery(initialQuery);
+    if(initialized){
       let buildingArray = [];
       cards.forEach((entry,index)=>{
         buildImagePath(entry).then((result)=>{
@@ -104,10 +103,11 @@ export async function getServerSideProps(context) {
       })
       .toArray();
 
+  console.log('ready to return')
   return {
     props: {
       cards: JSON.parse(JSON.stringify(cards)),
-      initialQuery: context.params.query
+      initiailized: true
     },
   };
 }
