@@ -5,18 +5,21 @@ import ReactLoading from 'react-loading';
 import { buildImagePath } from '../../util/buildImagePath';
 import { connectToDatabase } from "../../util/mongodb";
 import { cardInformation } from "../../util/interfaces";
+import SmallSearch from '../../components/SmallSearch';
 
 // currentPage:int default 1
 // loop i=currentPage-1 -> currentPage*pageSize
 
-const SearchLayout = ({cards}) => {
+const SearchLayout = ({cards, initialQuery}) => {
   const [cardInfo, setCardInfo] = useState<Array<cardInformation>>(null);
   const [pathUpdated, setPathUpdated] = useState<Boolean>(false);
   const [loading, setLoading] = useState<Boolean>(true);
+  const [query, setQuery] = useState(null);
   const router=useRouter();
 
   useEffect(()=>{
     if(Array.isArray(cards)){
+      setQuery(initialQuery);
       let buildingArray = [];
       let cardsAdded=0;
       cards.forEach((entry,index)=>{
@@ -89,8 +92,17 @@ const SearchLayout = ({cards}) => {
   else
     return(
       <div className='bg-blue-400 min-w-screen min-h-screen flex justify-center'>
-        <div className="my-8 p-4 rounded-lg h-full bg-white shadow-md flex flex-col sm:flex-row max-w-7xl">
-          <div className='pr-2'>
+        <div className="my-8 p-4 rounded-lg h-full bg-white shadow-md sm:flex-row max-w-7xl">
+          <div className='flex flex-col items-center'>
+            <div className='w-3/6 pb-2'>
+              <SmallSearch
+                type='discover'
+                query={query}
+                setQuery={setQuery}
+              />
+            </div>
+          </div>
+          <div className='flex flex-row pr-2'>
             {cardInfo.map((card)=>{
               return (
                 <Image
@@ -134,6 +146,7 @@ export async function getStaticProps(context) {
   return {
     props: {
       cards: JSON.parse(JSON.stringify(cards)),
+      initialQuery: context.params.query
     },
   };
 }
