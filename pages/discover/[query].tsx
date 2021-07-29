@@ -6,9 +6,7 @@ import { buildImagePath } from '../../util/buildImagePath';
 import { connectToDatabase } from "../../util/mongodb";
 import { cardInformation } from "../../util/interfaces";
 import SmallSearch from '../../components/SmallSearch';
-
-// currentPage:int default 1
-// loop i=currentPage-1 -> currentPage*pageSize
+import { splitTerms, joinTerms } from '../../util/MongoDBBuilders';
 
 const SearchLayout = ({cards, initialQuery}) => {
   const [cardInfo, setCardInfo] = useState<Array<cardInformation>>(null);
@@ -122,31 +120,26 @@ const SearchLayout = ({cards, initialQuery}) => {
     )
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [
-      { params: { query:'null' } } // See the "paths" section below
-    ],
-    fallback: true // See the "fallback" section below
-  };
-}
-
-export async function getStaticProps(context) {
-  if(context.params.query==='null')
-    return {props:{cards:null}};
+export async function getServerSideProps(context) {
+  const mongoDBQueryObject=await joinTerms(splitTerms(context.params.query))
 
   const { db } = await connectToDatabase();
 
   const cards = await db
       .collection("Year 1 & 2")
-      .find({$or: [ { Cost: 0, Type:"Spell", Class:"Rogue" } , {Name:"Hogger"}]})
-      .sort({})
+      .find(mongoDBQueryObject)
+      .sort({
+        "Token Type":1,
+        "Class":1,
+        "Name":1
+      })
       .toArray();
-
+  
   return {
     props: {
       cards: JSON.parse(JSON.stringify(cards)),
-      initialQuery: context.params.query
+      initialQuery: context.params.query,
+      initialized: true
     },
   };
 }

@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 
 const NotFound = () => {
   const route = useRouter();
-  console.log(route.query)
 
   return (
     <div className='bg-blue-400 w-screen h-screen flex justify-center'>

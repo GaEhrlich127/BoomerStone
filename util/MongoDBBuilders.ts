@@ -235,8 +235,6 @@ export const joinTerms = async(terms) => {
   })
 }
 
-//TODO: fix context.params.query.replaceAll crash on prod
-//TODO: Hook discover/query into database
-//TODO: Random pages
 //TODO: Syntax Guide page
-//TODO: Search SmallSearch not redirecting properly
+//TODO: Search SmallSearch not always redirecting properly
+//TODO: Add SmallSerach to card/cardID
