@@ -11,7 +11,7 @@ import { splitTerms, joinTerms } from '../../util/MongoDBBuilders';
 // currentPage:int default 1
 // loop i=currentPage-1 -> currentPage*pageSize
 
-const SearchLayout = ({cards, initialized=false}) => {
+const SearchLayout = ({cards, initialQuery, initialized=false}) => {
   const [cardInfo, setCardInfo] = useState<Array<cardInformation>>(null);
   const [pathUpdated, setPathUpdated] = useState<Boolean>(false);
   const [loading, setLoading] = useState<Boolean>(true);
@@ -19,23 +19,30 @@ const SearchLayout = ({cards, initialized=false}) => {
   const router=useRouter();
 
   useEffect(()=>{
-    if(initialized){
-      let buildingArray = [];
-      cards.forEach((entry,index)=>{
-        buildImagePath(entry).then((result)=>{
-          buildingArray.push({
-            filePath: result,
-            ...entry
+    if(initialized && typeof cards!=='undefined'){
+      setQuery(initialQuery);
+      if(Array.isArray(cards)){
+        let buildingArray = [];
+        if(cards.length>0){
+          cards.forEach((entry,index)=>{
+            buildImagePath(entry).then((result)=>{
+              buildingArray.push({
+                filePath: result,
+                ...entry
+              })
+              if(buildingArray.length===cards?.length){
+                setCardInfo(buildingArray);
+              }
+            })
           })
-          if(buildingArray.length===cards?.length){
-            console.log('updating state')
-            setCardInfo(buildingArray);
-          }
-        })
-      })
-      setPathUpdated(true);
+          setPathUpdated(true);
+        } else {
+          setPathUpdated(true);
+          setCardInfo([]);
+        }
+      }
     }
-  }, [cards])
+  }, [initialized])
 
   useEffect(()=>{
     if(pathUpdated){
@@ -43,14 +50,14 @@ const SearchLayout = ({cards, initialized=false}) => {
     }
   },[cardInfo])
 
-  if(loading)
+  if(loading){
     return(
       <div className='bg-blue-400 w-screen h-screen flex justify-center pt-16'>
         <ReactLoading type='spinningBubbles' color='#FFFFFF' height={96} width={96}/>
       </div>
     )
-
-  else
+  }
+  else if(!loading && cards.length===0){
     return(
       <div className='bg-blue-400 min-w-screen min-h-screen flex justify-center'>
         <div className="my-8 p-4 rounded-lg h-full bg-white shadow-md w-screen md:w-11/12 sm:flex-row max-w-7xl">
@@ -63,7 +70,27 @@ const SearchLayout = ({cards, initialized=false}) => {
               />
             </div>
             <p>
-              Found {cardInfo.length} cards.
+              Found 0 cards.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  else{
+    return(
+      <div className='bg-blue-400 min-w-screen min-h-screen flex justify-center'>
+        <div className="my-8 p-4 rounded-lg h-full bg-white shadow-md w-screen md:w-11/12 sm:flex-row max-w-7xl">
+          <div className='font-bold text-2xl py-1 flex flex-col items-center'>
+            <div className='w-3/6'>
+              <SmallSearch
+                type='search'
+                query={query}
+                setQuery={setQuery}
+              />
+            </div>
+            <p>
+              Found {cardInfo?.length ?? 0} cards.
             </p>
           </div>
           <div className='flex justify-center flex-wrap'>
@@ -86,10 +113,11 @@ const SearchLayout = ({cards, initialized=false}) => {
         </div>
       </div>
     )
+  }
 };
 
 export async function getServerSideProps(context) {
-  const mongoDBQueryObject=await joinTerms(splitTerms(context.params.query.replaceAll('  ',' ')))
+  const mongoDBQueryObject=await joinTerms(splitTerms(context.params.query))
 
   const { db } = await connectToDatabase();
 
@@ -102,12 +130,12 @@ export async function getServerSideProps(context) {
         "Name":1
       })
       .toArray();
-
-  console.log('ready to return')
+  
   return {
     props: {
       cards: JSON.parse(JSON.stringify(cards)),
-      initiailized: true
+      initialQuery: context.params.query,
+      initialized: true
     },
   };
 }

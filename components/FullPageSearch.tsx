@@ -14,7 +14,7 @@ const FullPageSearch = () => {
 
   // useEffect(()=>{
   //   if(!(query===null || typeof query==='undefined')){
-  //     console.log(splitTerms(query.replaceAll('  ',' ')));
+  //     console.log(splitTerms(query));
   //   }
   // }, [query])
 
