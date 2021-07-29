@@ -22,7 +22,6 @@ export const splitTerms = (str) => {
       for(let j=i;j<str.length;j++){
         //If we find it
         if(str[j]===')'){
-          console.log('entering parenthetical')
           terms.push(splitTerms(str.substring(i+1, j)))
           i=j+1;
         }
@@ -31,10 +30,10 @@ export const splitTerms = (str) => {
 
     //deal with OR and ||
     else if(str.substr(i,3).toLowerCase()==='or '){
-      terms.push({field:'OR',value:'OR'})
+      terms.splice(terms.length-1, 0 ,{field:'OR',value:'OR'})
       i+=3;
     } else if(str.substr(i,2).toLowerCase()==='||'){
-      terms.push({field:'OR',value:'OR'})
+      terms.splice(terms.length-1, 0 ,{field:'OR',value:'OR'})
       i+=2;
     }
     
@@ -44,11 +43,11 @@ export const splitTerms = (str) => {
       for(let j=i-1;j>=0;j--){
         //Look for a space
         if(str[j]===' '){
-          buildingObject.field=str.substring(j,i);
+          buildingObject.field=str.substring(j,i).toLowerCase().replaceAll(' ','');
           break;
         }
         if(j===0 && buildingObject.field === null){
-          buildingObject.field=str.substring(0,i);
+          buildingObject.field=str.substring(0,i).toLowerCase().replaceAll(' ','');
           break;
         }
       }
@@ -63,15 +62,17 @@ export const splitTerms = (str) => {
       for(let j=i+1;j<str.length;j++){
         //If we hit a quote
         if(str[j]==='"'){
-          //If we haven't found a quote yet, mark that we have
-          if(!quoteFound) { quoteFound=true; }
-          //If we have hit a quote, end the term
-          if(quoteFound){
-            buildingObject.value=str.substring(i+1, j);
-            i=j;
-            break;
+          quoteFound=true;
+          //Look for the second half
+          for(let k=j+1;k<str.length;k++){
+            if(str[k]==='"' || k==str.length-1){
+              //Save the value
+              buildingObject.value=str.substring(j+1, k+1).replaceAll('"','');
+              i=k;
+              break;
+            }
           }
-        }
+        } if(quoteFound){ break; }
         //Look for a space
         else if(str[j]===' ' && !quoteFound){
           buildingObject.value=str.substring(i+1, j);
@@ -126,9 +127,112 @@ export const splitTerms = (str) => {
 
 // When building the actual query from the converted terms
 
-// {field:OR, value:OR} will go between the options b/c of english
-// term1 OR term2
-// however mongoDB needs to parse as {$or:[{term1},{term2}]} 
+// MongoDB will interpret {Name:"Hogger"}  as Name=Hogger
+// MongoDB will interpret {Name:/Hogger/i} as Name:Hogger
 
-// MongoDB will interpret {Name:"Hogger"} as Name=Hogger
-// MongoDB will interpret {Name:/Hogger/} as Name:Hogger
+//A map of the shorthand terms to their Database names
+const termMapper={
+  n:'Name',
+  r:'Rarity',
+  c:'Class',
+  s:'Card Set',
+  m:'Cost',
+  a:'Attack',
+  h:'Health',
+  k:'Keywords',
+  e:'Textbox'
+}
+
+//Constructs a single term
+const buildSingleTerm = (terms, i) => {
+  let value;
+  if(terms[i].operator==='='){
+    value=terms[i].value;
+  }else{
+    value={$regex:terms[i].value, $options:'gi'};
+  }
+
+  //If the term is type
+  if(terms[i].field==='t'){
+    return {
+      $or:[
+        {Type:value},
+        {Subtype:value},
+        {"Token Type":value}
+      ]
+    }
+  }
+
+  //The numerical terms
+  else if(['m','a','h',].includes(terms[i].field)){
+    let numericalTerm={};
+    if(terms[i].operator==='='||terms[i].operator===':')
+      numericalTerm={$eq:parseInt(terms[i].value, 10)}
+    if(terms[i].operator==='>')
+      numericalTerm={$gt:parseInt(terms[i].value, 10)}
+    if(terms[i].operator==='<')
+      numericalTerm={$lt:parseInt(terms[i].value, 10)}
+    if(terms[i].operator==='>=')
+      numericalTerm={$gte:parseInt(terms[i].value, 10)}
+    if(terms[i].operator==='<=')
+      numericalTerm={$lte:parseInt(terms[i].value, 10)}
+
+    return { [termMapper[terms[i].field]]:numericalTerm }
+  }
+  //Other term
+  else{
+    return { [termMapper[terms[i].field]]:value }
+  }
+}
+
+//A helper method to allow joinTerms to be an async promise
+const joinTermsHelper = (terms, nested=false) => {
+  //Disable any tokens by default
+  let uncollectibleAllowed=false;
+  let finalTerms={ $and:[] };
+  
+  for(let i=0;i<terms.length;i++){
+
+    //If it's a nested array
+    if(Array.isArray(terms[i])){
+      finalTerms.$and.push(joinTermsHelper(terms[i], true))
+    }
+
+    //If the term is OR
+    else if(terms[i].field==='OR'){
+      let orTerm={$or:[]}
+      orTerm.$or.push(buildSingleTerm(terms,i+1));
+      orTerm.$or.push(buildSingleTerm(terms,i+2));
+      i+=2;
+      finalTerms.$and.push(orTerm);
+    }
+
+    //If the term is uncollectible
+    else if(terms[i].field==='u'){
+      uncollectibleAllowed=true;
+    }
+
+    //Build a standard term
+    else{
+      finalTerms.$and.push(buildSingleTerm(terms,i))
+    }
+  }
+  if(!uncollectibleAllowed && !nested){
+    finalTerms.$and.push({"Token Type":{ $exists:false }})
+  }
+
+  if(finalTerms.$and===[]){ delete finalTerms.$and }
+  return finalTerms;
+}
+
+//Constructs all of the terms together, all the lifting is done by joinTermsHelper
+export const joinTerms = async(terms) => {
+  return new Promise((resolve,reject)=>{
+    resolve(joinTermsHelper(terms))
+  })
+}
+
+//TODO: Search SmallSearch not redirecting properly
+//TODO: 0 results staying loading forever.
+//TODO: Random pages
+//TODO: Hook discover/query into database

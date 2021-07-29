@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Button from './Button';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
-import { splitTerms } from '../util/MongoDBBuilders';
+import { splitTerms, joinTerms } from '../util/MongoDBBuilders';
 
 const FullPageSearch = () => {
 
@@ -12,12 +12,11 @@ const FullPageSearch = () => {
   const router = useRouter();
 
 
-  useEffect(()=>{
-    if(!(query===null || typeof query==='undefined')){
-      console.log(splitTerms(query.replaceAll('  ',' ')));
-
-    }
-  }, [query])
+  // useEffect(()=>{
+  //   if(!(query===null || typeof query==='undefined')){
+  //     console.log(splitTerms(query.replaceAll('  ',' ')));
+  //   }
+  // }, [query])
 
   const count = (str:String, char:String) => {
     char=char.slice(0,1);

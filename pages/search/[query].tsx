@@ -1,11 +1,12 @@
 import Image from 'next/image';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 import ReactLoading from 'react-loading';
 import { buildImagePath } from '../../util/buildImagePath';
 import { connectToDatabase } from "../../util/mongodb";
 import { cardInformation } from "../../util/interfaces";
 import SmallSearch from "../../components/SmallSearch";
+import { splitTerms, joinTerms } from '../../util/MongoDBBuilders';
 
 // currentPage:int default 1
 // loop i=currentPage-1 -> currentPage*pageSize
@@ -88,24 +89,14 @@ const SearchLayout = ({cards, initialQuery}) => {
     )
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [
-      { params: { query:'null' } } // See the "paths" section below
-    ],
-    fallback: true // See the "fallback" section below
-  };
-}
-
-export async function getStaticProps(context) {
-  if(context.params.query==='null')
-    return {props:{cards:null}};
+export async function getServerSideProps(context) {
+  const mongoDBQueryObject=await joinTerms(splitTerms(context.params.query.replaceAll('  ',' ')))
 
   const { db } = await connectToDatabase();
 
   const cards = await db
       .collection("Year 1 & 2")
-      .find({"Card Set":/classic/i,$or:[{Class:/mage/i},{Class:/hunter/i}]})//({"Token Type":{$exists:false}})
+      .find(mongoDBQueryObject)
       .sort({
         "Token Type":1,
         "Class":1,
