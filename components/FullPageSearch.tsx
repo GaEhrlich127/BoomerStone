@@ -83,15 +83,23 @@ const FullPageSearch = () => {
       </div>
       <div className='flex justify-center'>
         <div className='flex justify-around w-screen md:w-3/6'>
-            <Button text='Random Card' onClick={ ()=>{ router.push(`/random/${query}`) }}/>
+            <Button text='Random Card' onClick={ ()=>{ 
+              if(query!==null && typeof query!=='undefined')
+                router.push(`random/${query}`)
+              else
+                router.push(`/random/`)
+            }}/>
             <Button text='Discover' onClick={ ()=>{
-              if(query!==null && typeof query!=='undefined'){
+              if(query!==null && typeof query!=='undefined')
                 router.push(`/discover/${query}`)
-              }
+              else
+                router.push(`/discover/`)
             }}/>
             <Button text='Search' onClick={ ()=>{
               if(query!==null && typeof query!=='undefined')
                 router.push(`/search/${query}`)
+              else
+                router.push(`/search/`)
             }}/>
         </div>
       </div>

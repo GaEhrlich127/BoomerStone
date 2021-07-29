@@ -79,11 +79,13 @@ const RandomLayout = ({cards, initialQuery, initialized=false}) => {
 };
 
 export async function getServerSideProps(context) {
+  const mongoDBQueryObject=await joinTerms(splitTerms('"'))
+
   const { db } = await connectToDatabase();
 
   const cards = await db
       .collection("Year 1 & 2")
-      .find({})
+      .find(mongoDBQueryObject)
       .sort({
         "Token Type":1,
         "Class":1,
@@ -94,7 +96,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       cards: JSON.parse(JSON.stringify(cards)),
-      initialQuery: "",
+      initialQuery: '',
       initialized: true
     },
   };
