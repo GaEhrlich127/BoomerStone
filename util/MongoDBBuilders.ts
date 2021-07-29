@@ -46,11 +46,11 @@ export const splitTerms = (str) => {
       for(let j=i-1;j>=0;j--){
         //Look for a space
         if(str[j]===' '){
-          buildingObject.field=str.substring(j,i).toLowerCase().replaceAll(' ','');
+          buildingObject.field=str.substring(j,i).toLowerCase().replace(/ /g,'');
           break;
         }
         if(j===0 && buildingObject.field === null){
-          buildingObject.field=str.substring(0,i).toLowerCase().replaceAll(' ','');
+          buildingObject.field=str.substring(0,i).toLowerCase().replace(/ /g,'');
           break;
         }
       }
@@ -70,7 +70,7 @@ export const splitTerms = (str) => {
           for(let k=j+1;k<str.length;k++){
             if(str[k]==='"' || k==str.length-1){
               //Save the value
-              buildingObject.value=str.substring(j+1, k+1).replaceAll('"','');
+              buildingObject.value=str.substring(j+1, k+1).replace(/"/g,'');
               i=k;
               break;
             }
