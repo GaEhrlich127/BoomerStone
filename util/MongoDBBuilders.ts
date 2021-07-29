@@ -235,6 +235,7 @@ export const joinTerms = async(terms) => {
   })
 }
 
+//TODO: pages/discover/index
 //TODO: Syntax Guide page
 //TODO: Search SmallSearch not always redirecting properly
-//TODO: Add SmallSerach to card/cardID
+//TODO: Add SmallSearch to card/cardID
