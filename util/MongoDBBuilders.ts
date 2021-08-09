@@ -235,8 +235,8 @@ export const joinTerms = async(terms) => {
   })
 }
 
-//TODO: Syntax Guide page
-//TODO: Search SmallSearch not always redirecting properly
+//TODO: Search SmallSearch not always redirecting properly (see /next/link?)
 //TODO: SmallSearch Home Button
 //TODO: Add SmallSearch to card/cardID
 //TODO: Pagination on large searches
+//TODO: Syntax Guide page

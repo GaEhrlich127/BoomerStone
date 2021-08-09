@@ -1,5 +1,3 @@
-import { useRouter } from "next/router";
-import Image from 'next/image';
 import { useEffect, useState } from "react";
 import ReactLoading from 'react-loading';
 import classNames from 'classnames';
@@ -42,7 +40,7 @@ const CardLayout = ({cards}) => {
       <div className='bg-blue-400 min-w-screen min-h-screen flex justify-center'>
         <div className="my-8 p-4 rounded-lg h-full bg-white shadow-md flex flex-col sm:flex-row">
           <div className='pr-2'>
-            {filePath && (<Image src={filePath} width={.8*375} height={.8*518} alt={cardInfo?.Name ?? 'Loading'}/>)}
+            {filePath && (<img src={filePath} width={.8*375} height={.8*518} alt={cardInfo?.Name ?? 'Loading'}/>)}
           </div>
           
           <div className='mt-6 flex-col space-y-2'>

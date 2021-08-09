@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 import ReactLoading from 'react-loading';
@@ -96,9 +95,7 @@ const SearchLayout = ({cards, initialQuery, initialized=false}) => {
           <div className='flex justify-center flex-wrap'>
             {cardInfo.map((card)=>{
               return (
-                <Image
-                  priority
-                  // loading='eager'
+                <img
                   className='cursor-pointer'
                   src={card.filePath}
                   width={.8*375}

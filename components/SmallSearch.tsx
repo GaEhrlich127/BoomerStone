@@ -18,7 +18,7 @@ const FullPageSearch = ({type, query, setQuery}) => {
       />
       <div
         className='sm:ml-4 md:ml-6 lg:ml-8 w-4 flex items-center cursor-pointer md:pl-2 lg:pl-4'
-        onClick={ ()=>{router.push(`/${type}/${query}`)} }
+        onClick={ ()=>{document.location.href=`/${type}/${query}`} }
       >
         <FontAwesomeIcon 
           icon={faSearch}

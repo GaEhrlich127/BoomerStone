@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 import ReactLoading from 'react-loading';
@@ -103,7 +102,7 @@ const SearchLayout = ({cards, initialQuery}) => {
           <div className='flex flex-row pr-2'>
             {cardInfo.map((card)=>{
               return (
-                <Image
+                <img
                   className='cursor-pointer'
                   src={card.filePath}
                   width={.8*375}
