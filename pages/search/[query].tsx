@@ -89,7 +89,7 @@ const SearchLayout = ({cards, initialQuery, initialized=false}) => {
               />
             </div>
             <p>
-              Found {cardInfo?.length ?? 0} cards.
+              Found {cardInfo?.length ?? 0} card{cardInfo.length===1? '' : 's'}.
             </p>
           </div>
           <div className='flex justify-center flex-wrap'>
