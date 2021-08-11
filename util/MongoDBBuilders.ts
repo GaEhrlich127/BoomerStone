@@ -264,6 +264,7 @@ export const joinTerms = async(terms) => {
   })
 }
 
+//TODO: Fix the location of the Syntax Guide button
 //TODO: SmallSearch Home Button
 //TODO: Add SmallSearch to card/cardID
 //TODO: Pagination on large searches

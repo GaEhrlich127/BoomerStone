@@ -11,13 +11,6 @@ const FullPageSearch = () => {
   const [query, setQuery] = useState(null);
   const router = useRouter();
 
-
-  // useEffect(()=>{
-  //   if(!(query===null || typeof query==='undefined')){
-  //     console.log(splitTerms(query));
-  //   }
-  // }, [query])
-
   const count = (str:String, char:String) => {
     char=char.slice(0,1);
     let counter=0;
@@ -83,6 +76,9 @@ const FullPageSearch = () => {
       </div>
       <div className='flex justify-center'>
         <div className='flex justify-around w-screen md:w-3/6'>
+            <Button text='Syntax Guide' onClick={ ()=>{ 
+              window.open('/syntax-guide','_blank')
+            }}/>
             <Button text='Random Card' onClick={ ()=>{ 
               if(query!==null && typeof query!=='undefined')
                 router.push(`random/${query}`)
