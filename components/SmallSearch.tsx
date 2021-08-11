@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 
 const FullPageSearch = ({type, query, setQuery}) => {
-1
+
   const router = useRouter();
 
   return (
     <form
       className="p-1 flex flex-row w-full bg-white rounded-md shadow-sm border-2 placeholder-gray-400 border-blue-500 focus:ring-blue-700 focus:border-blue-700"
-      onSubmit={ (e)=>{e.preventDefault();router.push(`/${type}/${query}`)} }
+      onSubmit={ (e)=>{e.preventDefault();document.location.href=`/${type}/${query}`} }
     >
       <input 
         className="px-3 py-2 w-10/12 focus:outline-none"

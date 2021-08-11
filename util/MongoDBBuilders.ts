@@ -145,6 +145,21 @@ const termMapper={
   k:'Keywords',
   e:'Textbox'
 }
+//A map of the shorthand rarities to the full rarity
+const rarityMapper={
+  b: 'Basic',
+  c: 'Common',
+  r: 'Rare',
+  e: 'Epic',
+  l: 'Legendary'
+}
+//A map of the shorthand rarities to the full rarity
+const setMapper={
+  GVG:'Goblins vs Gnomes',
+  BRM:'Blackrock Mountain',
+  TGT:'The Grand Tournament',
+  LOE:'League of Explorers'
+}
 
 //Constructs a single term
 const buildSingleTerm = (terms, i) => {
@@ -182,6 +197,20 @@ const buildSingleTerm = (terms, i) => {
 
     return { [termMapper[terms[i].field]]:numericalTerm }
   }
+  //Rarity shorthands
+  if(terms[i].field==='r' && terms[i].value.length===1){
+    return {[termMapper[terms[i].field]]: rarityMapper[terms[i].value]}
+  }
+  //Set shorthands
+  if(terms[i].field==='s'){
+    if(setMapper[terms[i].value.toUpperCase()]!=='undefined'){
+      return {[termMapper[terms[i].field]]: setMapper[terms[i].value.toUpperCase()]}
+    } else{
+      return { [termMapper[terms[i].field]]:value }
+    }
+
+  }
+
   //Other term
   else{
     return { [termMapper[terms[i].field]]:value }
@@ -235,8 +264,6 @@ export const joinTerms = async(terms) => {
   })
 }
 
-//TODO: Search SmallSearch not always redirecting properly (see /next/link?)
 //TODO: SmallSearch Home Button
 //TODO: Add SmallSearch to card/cardID
 //TODO: Pagination on large searches
-//TODO: Syntax Guide page
