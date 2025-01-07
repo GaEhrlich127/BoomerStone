@@ -52,7 +52,8 @@ const SearchLayout = ({cards, initialQuery, initialized=false}) => {
   if(loading){
     return(
       <div className='bg-blue-400 w-screen h-screen flex justify-center pt-16'>
-        <ReactLoading type='spinningBubbles' color='#FFFFFF' height={96} width={96}/>
+        Loading
+        {/* <ReactLoading type='spinningBubbles' color='#FFFFFF' height={96} width={96}/> */}
       </div>
     )
   }
@@ -117,7 +118,7 @@ export async function getServerSideProps(context) {
   const mongoDBQueryObject=await joinTerms(splitTerms(context.params.query))
 
   const { db } = await connectToDatabase();
-
+  
   const cards = await db
       .collection("Year 1 & 2")
       .find(mongoDBQueryObject)

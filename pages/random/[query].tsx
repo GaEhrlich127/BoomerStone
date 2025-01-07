@@ -73,7 +73,9 @@ const RandomLayout = ({cards, initialQuery, initialized=false}) => {
   }
   else return(
     <div className='bg-blue-400 w-screen h-screen flex justify-center pt-16'>
-      <ReactLoading type='spinningBubbles' color='#FFFFFF' height={96} width={96}/>
+      
+        Loading!
+        {/* <ReactLoading type='spinningBubbles' color='#FFFFFF' height={96} width={96}/> */}
     </div>
   )
 };

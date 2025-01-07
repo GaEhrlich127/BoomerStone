@@ -167,7 +167,7 @@ const buildSingleTerm = (terms, i) => {
   if(terms[i].operator==='='){
     value=terms[i].value;
   }else{
-    value={$regex:terms[i].value, $options:'gi'};
+    value = { $regex: terms[i].value, $options: 'i' };
   }
 
   //If the term is type
