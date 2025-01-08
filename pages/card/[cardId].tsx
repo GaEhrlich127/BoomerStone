@@ -147,10 +147,12 @@ export async function getStaticProps(context) {
     return {props:{cards:null}};
 
   const { db } = await connectToDatabase();
+  const ObjectID = require('mongodb').ObjectId;
+  const card_OID = new ObjectID(context.params.cardId);
 
   const cards = await db
       .collection("Year 1 & 2")
-      .find({ _id:require('mongodb').ObjectID(context.params.cardId)} )
+      .find({ _id:card_OID} )
       .sort({})
       .toArray();
 
