@@ -253,7 +253,7 @@ const joinTermsHelper = (terms, nested=false) => {
     finalTerms.$and.push({"Token Type":{ $exists:false }})
   }
 
-  if(finalTerms.$and===[]){ delete finalTerms.$and }
+  if(finalTerms.$and.length===0){ delete finalTerms.$and }
   return finalTerms;
 }
 
