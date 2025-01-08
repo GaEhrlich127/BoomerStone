@@ -83,9 +83,7 @@ const SearchLayout = ({cards, initialQuery}) => {
     return(
       <div className='bg-blue-400 w-screen h-screen flex justify-center pt-16'>
         Loading!
-        {/* 
-        Loading!
-        {/* <ReactLoading type='spinningBubbles' color='#FFFFFF' height={96} width={96}/> */} */}
+        {/* <ReactLoading type='spinningBubbles' color='#FFFFFF' height={96} width={96}/> */}
       </div>
     )
 
